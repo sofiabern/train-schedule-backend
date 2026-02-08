@@ -61,6 +61,7 @@ model Schedule {
   trainId       String
   routeId       String
   departureTime DateTime
+  daysOfWeek    Int[]    @default([1, 2, 3, 4, 5, 6, 0]) 
 
   train Train @relation(fields: [trainId], references: [id], onDelete: Cascade)
   route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)

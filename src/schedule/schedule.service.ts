@@ -75,12 +75,21 @@ export class ScheduleService {
     return schedule;
   }
 
-  async create(trainId: string, routeId: string, departureTime: string) {
+  async create(
+    trainId: string,
+    routeId: string,
+    departureTime: string,
+    daysOfWeek?: number[],
+  ) {
+    const days = (daysOfWeek?.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6]).map(
+      (d) => (d >= 0 && d <= 6 ? d : 0),
+    );
     return this.prisma.schedule.create({
       data: {
         trainId,
         routeId,
         departureTime: new Date(departureTime),
+        daysOfWeek: days,
       },
       include: {
         train: true,
@@ -98,14 +107,28 @@ export class ScheduleService {
 
   async update(
     id: string,
-    data: { trainId?: string; routeId?: string; departureTime?: string },
+    data: {
+      trainId?: string;
+      routeId?: string;
+      departureTime?: string;
+      daysOfWeek?: number[];
+    },
   ) {
     await this.findOne(id);
-    const updateData: { trainId?: string; routeId?: string; departureTime?: Date } = {};
+    const updateData: {
+      trainId?: string;
+      routeId?: string;
+      departureTime?: Date;
+      daysOfWeek?: number[];
+    } = {};
     if (data.trainId !== undefined) updateData.trainId = data.trainId;
     if (data.routeId !== undefined) updateData.routeId = data.routeId;
     if (data.departureTime !== undefined)
       updateData.departureTime = new Date(data.departureTime);
+    if (data.daysOfWeek !== undefined)
+      updateData.daysOfWeek = data.daysOfWeek.map((d) =>
+        d >= 0 && d <= 6 ? d : 0,
+      );
     return this.prisma.schedule.update({
       where: { id },
       data: updateData,

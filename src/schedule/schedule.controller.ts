@@ -44,6 +44,7 @@ export class ScheduleController {
       dto.trainId,
       dto.routeId,
       dto.departureTime,
+      dto.daysOfWeek,
     );
   }
 
@@ -54,6 +55,7 @@ export class ScheduleController {
       trainId: dto.trainId,
       routeId: dto.routeId,
       departureTime: dto.departureTime,
+      daysOfWeek: dto.daysOfWeek,
     });
   }
 
