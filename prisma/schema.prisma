@@ -42,12 +42,12 @@ model Route {
 }
 
 model RouteStation {
-  id        String   @id @default(uuid())
-  routeId        String
-  stationId      String
-  order          Int
-  arrivalOffset  Int     
-  departureOffset Int    
+  id            String   @id @default(uuid())
+  routeId       String
+  stationId     String
+  order         Int
+  arrivalTime   String 
+  departureTime String  
 
   route   Route   @relation(fields: [routeId], references: [id], onDelete: Cascade)
   station Station @relation(fields: [stationId], references: [id])

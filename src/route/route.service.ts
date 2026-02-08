@@ -7,7 +7,9 @@ export class RouteService {
 
   async findAll(name?: string) {
     return this.prisma.route.findMany({
-      where: name ? { name: { contains: name, mode: 'insensitive' } } : undefined,
+      where: name
+        ? { name: { contains: name, mode: 'insensitive' } }
+        : undefined,
       include: {
         routeStations: {
           orderBy: { order: 'asc' },
@@ -37,8 +39,8 @@ export class RouteService {
     routeStations: {
       stationId: string;
       order: number;
-      arrivalOffset: number;
-      departureOffset: number;
+      arrivalTime: string;
+      departureTime: string;
     }[],
   ) {
     return this.prisma.route.create({
@@ -46,10 +48,10 @@ export class RouteService {
         name,
         routeStations: {
           create: routeStations.map((rs) => ({
-            stationId: rs.stationId,
+            station: { connect: { id: rs.stationId } },
             order: rs.order,
-            arrivalOffset: rs.arrivalOffset,
-            departureOffset: rs.departureOffset,
+            arrivalTime: rs.arrivalTime,
+            departureTime: rs.departureTime,
           })),
         },
       },
@@ -69,8 +71,8 @@ export class RouteService {
       routeStations?: {
         stationId: string;
         order: number;
-        arrivalOffset: number;
-        departureOffset: number;
+        arrivalTime: string;
+        departureTime: string;
       }[];
     },
   ) {
@@ -86,10 +88,10 @@ export class RouteService {
           data.routeStations.length > 0 && {
             routeStations: {
               create: data.routeStations.map((rs) => ({
-                stationId: rs.stationId,
+                station: { connect: { id: rs.stationId } },
                 order: rs.order,
-                arrivalOffset: rs.arrivalOffset,
-                departureOffset: rs.departureOffset,
+                arrivalTime: rs.arrivalTime,
+                departureTime: rs.departureTime,
               })),
             },
           }),
