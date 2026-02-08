@@ -22,13 +22,24 @@ export class ScheduleController {
   @Get()
   findAll(
     @Query('search') search?: string,
-    @Query('sortBy') sortBy?: 'departureTime' | 'trainName' | 'routeName',
+    @Query('sortBy')
+    sortBy?: 'departureTime' | 'arrivalTime' | 'trainName' | 'routeName',
     @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+    @Query('dayOfWeek') dayOfWeek?: string,
   ) {
+    const day =
+      dayOfWeek !== undefined && dayOfWeek !== ''
+        ? parseInt(dayOfWeek, 10)
+        : undefined;
+    const dayOfWeekFilter =
+      typeof day === 'number' && !Number.isNaN(day) && day >= 0 && day <= 6
+        ? day
+        : undefined;
     return this.scheduleService.findAll({
       search,
       sortBy,
       sortOrder,
+      dayOfWeek: dayOfWeekFilter,
     });
   }
 

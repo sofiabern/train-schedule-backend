@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -7,10 +8,16 @@ export class ScheduleService {
 
   async findAll(params: {
     search?: string;
-    sortBy?: 'departureTime' | 'trainName' | 'routeName';
+    sortBy?: 'departureTime' | 'arrivalTime' | 'trainName' | 'routeName';
     sortOrder?: 'asc' | 'desc';
+    dayOfWeek?: number;
   }) {
-    const { search, sortBy = 'departureTime', sortOrder = 'asc' } = params;
+    const {
+      search,
+      sortBy = 'departureTime',
+      sortOrder = 'asc',
+      dayOfWeek,
+    } = params;
     const searchLower = search?.toLowerCase().trim();
 
     const schedules = await this.prisma.schedule.findMany({
@@ -28,8 +35,21 @@ export class ScheduleService {
     });
 
     let filtered = schedules;
+
+    if (dayOfWeek !== undefined) {
+      filtered = filtered.filter((s) => {
+        const raw =
+          'daysOfWeek' in s
+            ? (s as { daysOfWeek?: number[] }).daysOfWeek
+            : undefined;
+        const days = Array.isArray(raw) ? raw : [];
+        if (days.length === 0) return true;
+        return days.includes(dayOfWeek);
+      });
+    }
+
     if (searchLower) {
-      filtered = schedules.filter((s) => {
+      filtered = filtered.filter((s) => {
         const trainMatch = s.train.name.toLowerCase().includes(searchLower);
         const routeMatch = s.route.name.toLowerCase().includes(searchLower);
         const stationMatch = s.route.routeStations.some((rs) =>
@@ -39,12 +59,22 @@ export class ScheduleService {
       });
     }
 
+    function getArrivalSortKey(s: (typeof filtered)[0]): number {
+      const stops = s.route.routeStations ?? [];
+      const last = stops[stops.length - 1];
+      if (!last?.arrivalTime) return new Date(s.departureTime).getTime();
+      const dateStr = s.departureTime.toISOString().slice(0, 10);
+      return new Date(`${dateStr}T${last.arrivalTime}:00`).getTime();
+    }
+
     filtered.sort((a, b) => {
       let cmp = 0;
       if (sortBy === 'departureTime') {
         cmp =
           new Date(a.departureTime).getTime() -
           new Date(b.departureTime).getTime();
+      } else if (sortBy === 'arrivalTime') {
+        cmp = getArrivalSortKey(a) - getArrivalSortKey(b);
       } else if (sortBy === 'trainName') {
         cmp = a.train.name.localeCompare(b.train.name);
       } else if (sortBy === 'routeName') {
@@ -90,7 +120,7 @@ export class ScheduleService {
         routeId,
         departureTime: new Date(departureTime),
         daysOfWeek: days,
-      },
+      } as Prisma.ScheduleUncheckedCreateInput,
       include: {
         train: true,
         route: {
