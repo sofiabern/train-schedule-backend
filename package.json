@@ -13,7 +13,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "start:render": "sh -c \"[ -f dist/main.js ] && node dist/main || (cd .. && node dist/main)\"",
+    "start:render": "node bootstrap.js || node ../bootstrap.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
