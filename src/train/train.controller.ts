@@ -32,7 +32,7 @@ export class TrainController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateTrainDto) {
-    return this.trainService.create(dto.name, dto.capacity);
+    return this.trainService.create(dto.name);
   }
 
   @UseGuards(JwtAuthGuard)

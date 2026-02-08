@@ -7,7 +7,9 @@ export class TrainService {
 
   async findAll(name?: string) {
     return this.prisma.train.findMany({
-      where: name ? { name: { contains: name, mode: 'insensitive' } } : undefined,
+      where: name
+        ? { name: { contains: name, mode: 'insensitive' } }
+        : undefined,
       orderBy: { name: 'asc' },
     });
   }
@@ -18,11 +20,11 @@ export class TrainService {
     return train;
   }
 
-  async create(name: string, capacity: number) {
-    return this.prisma.train.create({ data: { name, capacity } });
+  async create(name: string) {
+    return this.prisma.train.create({ data: { name } });
   }
 
-  async update(id: string, data: { name?: string; capacity?: number }) {
+  async update(id: string, data: { name?: string }) {
     await this.findOne(id);
     return this.prisma.train.update({ where: { id }, data });
   }

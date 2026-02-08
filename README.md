@@ -9,7 +9,7 @@ REST API for the Train Schedule app. Built with **NestJS**, **Prisma**, and **Po
 | Resource | Description |
 |----------|-------------|
 | **Auth** | Register, login (JWT) |
-| **Trains** | Trains (name, capacity) |
+| **Trains** | Trains (name) |
 | **Stations** | Stations |
 | **Routes** | Routes with stops (station, order, arrival/departure time) |
 | **Schedules** | Trips: train + route + departure time + days of week |

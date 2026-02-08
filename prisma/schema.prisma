@@ -26,7 +26,6 @@ model Station {
 model Train {
   id        String     @id @default(uuid())
   name      String
-  capacity  Int
   schedules Schedule[]
 
   @@map("trains")
