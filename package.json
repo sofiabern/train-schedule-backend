@@ -9,7 +9,7 @@
     "build": "nest build",
     "db:push": "npx prisma generate && npx prisma db push",
     "db:migrate": "npx prisma migrate deploy",
-    "build:render": "npx prisma generate && npx prisma migrate deploy && nest build",
+    "build:render": "npx prisma generate && (npx prisma migrate deploy || (npx prisma db push && npx prisma migrate resolve --applied 0_init)) && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
