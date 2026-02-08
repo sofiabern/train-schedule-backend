@@ -7,8 +7,63 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
+
+  @@map("users")
+}
+
+model Station {
+  id             String         @id @default(uuid())
+  name           String         @unique
+  routeStations  RouteStation[]
+
+  @@map("stations")
+}
+
+model Train {
+  id        String     @id @default(uuid())
+  name      String
+  capacity  Int
+  schedules Schedule[]
+
+  @@map("trains")
+}
+
+model Route {
+  id            String         @id @default(uuid())
+  name          String
+  routeStations RouteStation[]
+  schedules     Schedule[]
+
+  @@map("routes")
+}
+
+model RouteStation {
+  id        String   @id @default(uuid())
+  routeId        String
+  stationId      String
+  order          Int
+  arrivalOffset  Int     
+  departureOffset Int    
+
+  route   Route   @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  station Station @relation(fields: [stationId], references: [id])
+
+  @@unique([routeId, order])
+  @@map("route_stations")
+}
+
+model Schedule {
+  id            String   @id @default(uuid())
+  trainId       String
+  routeId       String
+  departureTime DateTime
+
+  train Train @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@map("schedules")
 }
