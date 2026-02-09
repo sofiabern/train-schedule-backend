@@ -19,11 +19,13 @@ import { RouteService } from './route.service';
 export class RouteController {
   constructor(private routeService: RouteService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Query('name') name?: string) {
     return this.routeService.findAll(name);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.routeService.findOne(id);

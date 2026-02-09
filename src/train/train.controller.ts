@@ -19,11 +19,13 @@ import { TrainService } from './train.service';
 export class TrainController {
   constructor(private trainService: TrainService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Query('name') name?: string) {
     return this.trainService.findAll(name);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.trainService.findOne(id);
