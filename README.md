@@ -14,7 +14,14 @@ REST API for the Train Schedule app. Built with **NestJS**, **Prisma**, and **Po
 | **Routes** | Routes with stops (station, order, arrival/departure time) |
 | **Schedules** | Trips: train + route + departure time + days of week |
 
-GET endpoints are public. Create, update, and delete require a JWT token.
+**Public endpoints:**
+- `GET /schedules` - View schedules (read-only)
+- `POST /auth/login` - Login
+- `POST /auth/register` - Register new admin (requires authentication)
+
+**Protected endpoints (require JWT token):**
+- All `GET /trains`, `GET /stations`, `GET /routes` - View trains, stations, routes
+- All `POST`, `PUT`, `PATCH`, `DELETE` operations - Create, update, delete any resource
 
 ---
 
